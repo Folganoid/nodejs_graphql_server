@@ -1,24 +1,26 @@
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLSchema , GraphQLID, GraphQLInt, GraphQLList } = graphql;
+const Movies = require('../models/movie');
+const Directors = require('../models/director');
 
-const movies = [
-  { id: 1, name: 'film1', genre: 'Crime', directorId: 1},
-  { id: 1, name: 'film11', genre: 'Crime', directorId: 1},
-  { id: 1, name: 'film12', genre: 'Crime', directorId: 1},
-  { id: 2, name: 'film2', genre: 'Horror', directorId: 2},
-  { id: 2, name: 'film21', genre: 'Horror', directorId: 2},
-  { id: 2, name: 'film22', genre: 'Horror', directorId: 2},
-  { id: 3, name: 'film3', genre: 'Cartoon', directorId: 3},
-  { id: 2, name: 'film31', genre: 'Horror', directorId: 3},
-  { id: 4, name: 'film4', genre: 'Thriller', directorId: 4},
-]
+// const movies = [
+//   { id: 1, name: 'film1', genre: 'Crime', directorId: 1},
+//   { id: 1, name: 'film11', genre: 'Crime', directorId: 1},
+//   { id: 1, name: 'film12', genre: 'Crime', directorId: 1},
+//   { id: 2, name: 'film2', genre: 'Horror', directorId: 2},
+//   { id: 2, name: 'film21', genre: 'Horror', directorId: 2},
+//   { id: 2, name: 'film22', genre: 'Horror', directorId: 2},
+//   { id: 3, name: 'film3', genre: 'Cartoon', directorId: 3},
+//   { id: 2, name: 'film31', genre: 'Horror', directorId: 3},
+//   { id: 4, name: 'film4', genre: 'Thriller', directorId: 4},
+// ]
 
-const directors = [
-  { id: 1, name: 'director 1', age: 51 },
-  { id: 2, name: 'director 2', age: 52 },
-  { id: 3, name: 'director 3', age: 53 },
-  { id: 4, name: 'director 4', age: 54 },
-]
+// const directors = [
+//   { id: 1, name: 'director 1', age: 51 },
+//   { id: 2, name: 'director 2', age: 52 },
+//   { id: 3, name: 'director 3', age: 53 },
+//   { id: 4, name: 'director 4', age: 54 },
+// ]
 
 const MovieType = new GraphQLObjectType({
   name: 'Movie',
@@ -29,7 +31,8 @@ const MovieType = new GraphQLObjectType({
     director: {
       type: DirectorType,
       resolve(parent, args) {
-        return directors.find( director => director.id == parent.id);
+        // return directors.find( director => director.id == parent.id);
+        return Directors.findById(parent.directorId);
       }
     }
   }),
@@ -44,7 +47,8 @@ const DirectorType = new GraphQLObjectType({
     movies: {
       type: new GraphQLList(MovieType),
       resolve(parent, args) {
-        return movies.filter(movie => movie.directorId === parent.id);
+        // return movies.filter(movie => movie.directorId === parent.id);
+        return Movies.find({directorId: parent.id});
       },
     },
   }),
@@ -57,26 +61,30 @@ const Query = new GraphQLObjectType({
       type: MovieType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return movies.find(movie => movie.id == args.id);
+        // return movies.find(movie => movie.id == args.id);
+        return Movies.findById(args.id);
       }
     },
     director: {
       type: DirectorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return directors.find( director => director.id == args.id);
+        // return directors.find( director => director.id == args.id);
+        return Director.findById(args.id);
       }
     },
     movies: {
       type: new GraphQLList(MovieType),
       resolve(parent, args) {
-        return movies;
+        // return movies;
+        return Movies.find({});
       }
     },
     directors: {
       type: new GraphQLList(DirectorType),
       resolve(parent, args) {
-        return directors;
+        // return directors;
+        return Directors.find({});
       }
     },
   },
@@ -88,21 +96,29 @@ module.exports = new GraphQLSchema({
 
 // //query
 // query($id: ID) {
-//   director(id: $id) {
+//   movie(id: $id) {
 //     id
 //     name
-//     age
-//     movies {
+//     director{
+//       id
 //       name
-//       genre
+//       age
 //     }
-//   }
-//   directors{
-//     name
-//     age
 //   }
 // }
 // //vars
 // {
-//   "id": "3"
+//   "id": "6454f8195a30fba7f54cc49f"
+// }
+
+// query{
+//   movies {
+//     id
+//     name
+//     director{
+//       id
+//       name
+//       age
+//     }
+//   }
 // }
