@@ -7,7 +7,7 @@ const Director = require('../models/director');
 const app = express();
 const PORT = 3000;
 
-mongoose.connect('mongodb://user:user@atlas-sql-6454f17c1249f9356411a361-e20hk.a.query.mongodb.net/graphql?ssl=true&authSource=admin', {useNewUrlParser: true});
+mongoose.connect('mongodb://root:password@localhost:27017/local?authSource=admin', {useNewUrlParser: true});
 
 app.use('/', graphqlHTTP({
   schema,
