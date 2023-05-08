@@ -3,11 +3,16 @@ const { graphqlHTTP } = require('express-graphql');
 const schema = require('../schema/schema');
 const mongoose = require('mongoose');
 const Director = require('../models/director');
+const cors = require('cors');
 
 const app = express();
 const PORT = 3000;
 
 mongoose.connect('mongodb://root:password@localhost:27017/local?authSource=admin', {useNewUrlParser: true});
+
+app.use(cors({
+  origin: '*'
+}));
 
 app.use('/', graphqlHTTP({
   schema,
